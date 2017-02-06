@@ -19,11 +19,11 @@ node.name: node-1
 #
 # Path to directory where to store the data (separate multiple locations by comma):
 #
-# path.data: /path/to/data
+# path.data: /var/data/elasticsearch
 #
 # Path to log files:
 #
-# path.logs: /path/to/logs
+# path.logs: /var/log/elasticsearch
 ```
 
 ## Gateway
@@ -36,14 +36,6 @@ gateway.expected_nodes: 3       # Cluster 中一共有几个 nodes
 gateway.recover_after_time: 3m  # 如果一个 node 离线超过 3 分钟就还是 recovery
 ```
 
-## 最少的 mater node 个数
-
-```yaml
-minimum_master_nodes: 2 # 至少有两个 master node 同时在线才能允许 cluster 被使用
-
-#Prevent the "split brain" by configuring the majority of nodes (total number of nodes / 2 + 1):
-```
-
 ## Network
 
 ```yaml
@@ -51,7 +43,7 @@ minimum_master_nodes: 2 # 至少有两个 master node 同时在线才能允许 c
 
 # 防止将不属于这个 cluster 的 node 也添加进来，造成数据混乱
 # hosts 设置成 cluster 中各个 node 的 IP，所有的 node 的设置应该是一样的
-discovery.zen.ping.unicast.hosts: ["host1", "host2"]
+discovery.zen.ping.unicast.hosts: ["host1", "host2:port", "host3[portX-portY]"]
 discovery.zen.ping.multicast.enable: false
 
 
@@ -81,7 +73,8 @@ http.enabled: False # 在 data node 添加此设置，确保 data node 只能通
 ES_HEAP_SIZE = RAM／2
 
 # 关闭系统的 memory swaping
-bootstrap.memory_lock: true # Elasticsearch performs poorly when the system is swapping the memory.
+# bootstrap.memory_lock: true Elasticsearch performs poorly when the system is swapping the memory.
+bootstrap.mlockall: true
 ```
 
 ## `File Descripters／MMap`
